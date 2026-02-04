@@ -3,13 +3,11 @@
 #include <windows.h>
 
 void introduccion();
-int Fecha(int d, int m, int a);
-int Hora(int h, int min);
 int agendarCita(char *nombre, char *cedula, char *medicos);
 void medicos(char *medicos);
 void cedula(char *cedula, char *nombre);
 void verificar();
-void cancelar(char *nombre, char *cedula, char *medicos, int *dia, int *mes, int *anio, int *hora, int *minuto);
+void cancelar(char *nombre, char *cedula, char *medicos);
 
 int main(){
     int seleccion;
@@ -35,14 +33,14 @@ void introduccion(){
     printf("****************************************************\n");
     printf("\n");
     printf("Desea agendar una cita o revisar sus citas pendientes \n");
-    printf("______________________________________\n");
+    printf("________________________________________________________________________________\n");
 }
 
 void verificar(){
     int seleccion;
     char cd[11];
     char nm[50];
-    char *med;
+    char med[150];
     do{
         printf("Marque 1 si desea registrar una cita y 2 si desea cancelar una cita\n");
         printf("*************************************************\n");
@@ -51,39 +49,42 @@ void verificar(){
         if(seleccion==1){
             cedula(cd, nm);
             medicos(med);
-            agendarCita(cd, nm, med);
+            agendarCita(nm, cd, med);
         }else if(seleccion==2){
-            cancelar(char *nombre, char *cedula, char *medicos, int *dia, int *mes, int *anio, int *hora, int *minuto);
+            cancelar(nm, cd, med);
         }else{
             printf("Servicio no disponible, ingrese nuevamente\n");
         }
     }while(seleccion<=0 || seleccion>2);
 }
 
-void cancelar(char *nombre, char *cedula, char *medicos, int *dia, int *mes, int *anio, int *hora, int *minuto){
+void cancelar(char *nombre, char *cedula, char *medicos) {
     char ced[11];
-    do{
-    printf("Ingrese su cedula para verificar datos registrados\n")
+    
+    do {
+        printf("Ingrese su cedula para verificar datos registrados\n"); 
+        
         scanf("%s", ced); 
         getchar(); 
+
         if (strlen(ced) == 10) {
-            printf("\n--- Verificando.. ---\n");
+            printf("\n--- Verificando ---\n");
+            printf("\n=========================================\n");
         } else {
             printf("\nError: la cedula debe tener exactamente 10 digitos\n");
         }
     } while (strlen(ced) != 10);
-    if(ced==cedula){
+
+    if (strcmp(ced, cedula) == 1) {
         printf("\n=========================================\n");
-        printf("        CITA PENDIENTE \n");
+        printf("         CITA PENDIENTE \n");
         printf("=========================================\n");
-        printf("Paciente: %s\n", cedula);
-        printf("Cédula:   %s\n", nombre);
+        printf("Paciente: %s\n", nombre);  
+        printf("Cédula:   %s\n", cedula);  
         printf("Médico:   %s\n", medicos);
-        printf("Fecha:    %02d/%02d/%04d\n", dia, mes, anio);
-        printf("Hora:     %02d:%02d\n", hora, minuto);
         printf("=========================================\n");
-    }else{
-        printf("No tiene datos previamente registrados\n");
+    } else {
+        printf("No tiene datos previamente registrados o la cédula no coincide\n");
     }
 }
 
@@ -133,7 +134,7 @@ void medicos(char *medicos){
         scanf("%i", &seleccion);
         getchar();
         switch (seleccion){
-            case 1 : medicos="Lcda. Maria Dolores Soto Cueva";
+            case 1 : strcpy(medicos, "Lcda. Maria Dolores Soto Cueva");
             printf("Ha ingresado a laboratorio Clinico, su medico encargado sera la %s\n", medicos);
             break;
             case 2 :printf("Ha ingresado a Medicina General, Seleccione su medico por favor\n");
@@ -142,20 +143,20 @@ void medicos(char *medicos){
                 scanf("%i", &med);
                 getchar();
                 if(med==1){
-                    medicos="Doc. Liliana Emperatriz Jimbo Gonzales";
+                    strcpy(medicos, "Doc. Liliana Emperatriz Jimbo Gonzales");
                     printf("Usted ha solicitado una cita con la %s\n", medicos);
                 }else if(med==2){
-                    medicos="Doc. Jhon Alexander Aguirre Suarez";
+                    strcpy(medicos, "Doc. Jhon Alexander Aguirre Suarez");
                     printf("Usted ha solicitado una cita con el %s\n", medicos);
                 }else{
                     printf("Medico no disponible, ingrese uno nuevamente\n");
                 }
             }while(med<0 || med>2);
             break;
-            case 3 : medicos="Doc. Emily Jassiel Salas Paz";
+            case 3 : strcpy(medicos, "Doc. Emily Jassiel Salas Paz");
             printf("Ha ingresado a Odontologia, su medico encargado sera la %s\n", medicos);
             break;
-            case 4 :medicos="Doc. Pilar Valentina Naranjo Quizhpe";
+            case 4 :strcpy(medicos, "Doc. Pilar Valentina Naranjo Quizhpe");
             printf("Ha ingresado a Psicologia Clinica, su medico encargado sera la %s\n", medicos);
             break;
             default:printf("Sistema no permitido, sleccione un servicio disponible\n");
@@ -171,48 +172,42 @@ int agendarCita(char *nombre, char *cedula, char *medicos) {
     int hora, minuto;
     char cd[11];
     char nm[50];
-    char * med;
-
+    char *med;
     printf("\n--- AGENDAR CITA MEDICA ---\n");
-    do {
-        printf("Ingrese la fecha (DD MM AAAA): ");
-        scanf("%d %d %d", &dia, &mes, &anio);
 
-        if (!Fecha(dia, mes, anio)) {
+     do {
+        printf("Ingrese la fecha (DD MM AAAA): ");
+        scanf("%i", &dia);
+        scanf("%i", &mes);
+        scanf("%i", &anio);
+        if (dia>31 || dia<1) {
+            printf("Fecha no valida. Intente nuevamente.\n");
+        }else if(mes<1 || mes>12){
+            printf("Fecha no valida. Intente nuevamente.\n");
+        }else if(anio!=2026){
             printf("Fecha no valida. Intente nuevamente.\n");
         }
-    } while (!Fecha(dia, mes, anio));
+    } while (dia>31 || dia<0 || mes<1 || mes>12 || anio!=2026);
 
     do {
         printf("Ingrese la hora (HH MM): ");
-        scanf("%d %d", &hora, &minuto);
-
-        if (!Hora(hora, minuto)) {
-            printf("- Horario: 08:00 a 17:00\n");
+        scanf("%i", &hora);
+        scanf("%i", &minuto);
+        if (hora<8 || hora>17) {
+            printf("- Horario: 08:00 a 17:00\n"); 
+        }else if(minuto!=00 && minuto!=30){
             printf("- Solo minutos 00 o 30\n");
         }
-    } while (!Hora(hora, minuto));
+    } while (hora<8 || hora>17 || minuto!=00 && minuto!=30);
     
     printf("\n=========================================\n");
     printf("        CITA AGENDADA CORRECTAMENTE\n");
     printf("=========================================\n");
-    printf("Paciente: %s\n", cedula);
-    printf("Cédula:   %s\n", nombre);
+    printf("Paciente: %s\n", nombre);
+    printf("Cédula:   %s\n", cedula);
     printf("Médico:   %s\n", medicos);
     printf("Fecha:    %02d/%02d/%04d\n", dia, mes, anio);
     printf("Hora:     %02d:%02d\n", hora, minuto);
     printf("=========================================\n");
 }
 
-int Fecha(int d, int m, int a) {
-    if (a > 2026) return 0;
-    if (m < 1 || m > 12) return 0;    
-    if (d < 1 || d > 31) return 0;    
-    return 1;                        
-}
-
-int Hora(int h, int min) {
-    if (h < 8 || h > 17) return 0;          
-    if (min != 0 && min != 30) return 0;   
-    return 1;                              
-}
